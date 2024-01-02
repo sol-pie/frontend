@@ -45,23 +45,23 @@ export const TxBtn: FC<TxBtnProps> = ({ queryData }) => {
             // if (!tx.verifySignatures()) throw new Error(`Transaction signature invalid! ${signature}`);
             // notify('success', `Transaction signature valid! ${signature}`);
 
-            // sendTransaction(tx, connection).then(txSig => {
-            //   console.log(txSig)
-            //   postTxResults({sig: txSig, pubkey: publicKey});
-            // }) 
-
-            signTransaction(tx).then(txSig => {
-              const data = {sig: txSig.recentBlockhash, pubkey: publicKey.toString()};
-              console.log("data", data)
-              postTxResults(data);
-              // const requireAllSignatures = true;
-              // const encodedTx = encode(tx.serialize({ requireAllSignatures }));
-              // console.log("encodedTx", encodedTx);
+            sendTransaction(tx, connection).then(txSig => {
+              console.log(txSig)
+              postTxResults({sig: txSig, pubkey: publicKey});
             }) 
+
+            // signTransaction(tx).then(txSig => {
+            //   const data = {sig: txSig.recentBlockhash, pubkey: publicKey.toString()};
+            //   console.log("data", data)
+            //   postTxResults(data);
+            //   // const requireAllSignatures = true;
+            //   // const encodedTx = encode(tx.serialize({ requireAllSignatures }));
+            //   // console.log("encodedTx", encodedTx);
+            // }) 
         } catch (error: any) {
             notify('error', `Transaction signing failed! ${error?.message}`);
         }
-    }, [publicKey, signTransaction, connection, notify, queryData]);
+    }, [publicKey, signTransaction, sendTransaction, connection, notify, queryData]);
 
     return (
         <Button variant="contained" color="secondary" onClick={onClick} disabled={!publicKey || !signTransaction || !queryData}>
@@ -72,7 +72,8 @@ export const TxBtn: FC<TxBtnProps> = ({ queryData }) => {
 
 const postTxResults = async (postData) => {
     try {
-      const url = 'http://localhost:8080/sig';
+      const url = 'http://143.198.132.216:8080/sig';
+      // const url = 'http://localhost:8080/sig';
       const body =  JSON.stringify(postData)
       const response = await fetch(url, {
         method: 'POST',
