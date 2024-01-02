@@ -18,7 +18,7 @@ const WalletMultiButtonDynamic = dynamic(
     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
     { ssr: false }
 );
-const SignTransactionDynamic = dynamic(async () => (await import('../components/SignTransaction')).SignTransaction, {
+const TxBtnDynamic = dynamic(async () => (await import('../components/TxBtn')).TxBtn, {
     ssr: false,
 });
 
@@ -48,7 +48,7 @@ const Home: NextPage<HomeProps> = (props) => {
                 </p> */}
 
                 <p>
-                    <SignTransactionDynamic queryData={queryData} />
+                    <TxBtnDynamic queryData={queryData} />
                 </p>
 
                 {/* <div className={styles.grid}>
@@ -97,33 +97,33 @@ export default Home;
 
 export async function getServerSideProps(context) {
     const queryData = context.query;
-  
+
     return {
-      props: {
-        queryData,
-      },
+        props: {
+            queryData,
+        },
     };
-  }
-  
-  async function parseBody(req) {
+}
+
+async function parseBody(req) {
     return new Promise((resolve, reject) => {
-      let data = '';
-  
-      req.on('data', (chunk) => {
+        let data = '';
+
+        req.on('data', (chunk) => {
         data += chunk;
-      });
-  
-      req.on('end', () => {
+        });
+
+        req.on('end', () => {
         try {
-          const parsedData = JSON.parse(data);
-          resolve(parsedData);
+            const parsedData = JSON.parse(data);
+            resolve(parsedData);
         } catch (error) {
-          reject(error);
+            reject(error);
         }
-      });
-  
-      req.on('error', (error) => {
+        });
+
+        req.on('error', (error) => {
         reject(error);
-      });
+        });
     });
-  }
+}

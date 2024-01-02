@@ -1,20 +1,20 @@
-import { Button } from '@mui/material';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
-import bs58 from 'bs58';
 import type { FC } from 'react';
 import React, { useCallback } from 'react';
+import { Button } from '@mui/material';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { Transaction } from '@solana/web3.js';
+import bs58 from 'bs58';
 import { decode } from "bs58";
 
 import { useNotify } from './notify';
 
-interface SignTransactionProps {
+interface TxBtnProps {
 	queryData: any; 
 }
 
-export const SignTransaction: FC<SignTransactionProps> = ({ queryData }) => {
+export const TxBtn: FC<TxBtnProps> = ({ queryData }) => {
     const { connection } = useConnection();
-    const { publicKey, signTransaction } = useWallet();
+    const { publicKey, signTransaction, sendTransaction } = useWallet();
     const notify = useNotify();
 
     const onClick = useCallback(async () => {
@@ -25,7 +25,7 @@ export const SignTransaction: FC<SignTransactionProps> = ({ queryData }) => {
             const encodedData = decode(queryData.tx);
             let tx = Transaction.from(encodedData);
             const { blockhash } = await connection.getLatestBlockhash();
-		    tx.recentBlockhash = blockhash;
+            tx.recentBlockhash = blockhash;
             console.log("tx", tx)
             
             // let transaction = new Transaction({
@@ -45,26 +45,26 @@ export const SignTransaction: FC<SignTransactionProps> = ({ queryData }) => {
             // if (!tx.verifySignatures()) throw new Error(`Transaction signature invalid! ${signature}`);
             // notify('success', `Transaction signature valid! ${signature}`);
 
-            		// sendTransaction(tx, connection).then(txSig => {
-		// 	console.log(txSig)
-		// 	setPostData({sig: txSig, pubkey: publicKey});
-		// 	handlePostRequest();
-		// }) 
-		signTransaction(tx).then(txSig => {
-			const data = {sig: txSig.recentBlockhash, pubkey: publicKey.toString()};
-			console.log("data", data)
-			postTxResults(data);
-			// const requireAllSignatures = true;
-			// const encodedTx = encode(tx.serialize({ requireAllSignatures }));
-			// console.log("encodedTx", encodedTx);
-		}) 
+            // sendTransaction(tx, connection).then(txSig => {
+            //   console.log(txSig)
+            //   postTxResults({sig: txSig, pubkey: publicKey});
+            // }) 
+
+            signTransaction(tx).then(txSig => {
+              const data = {sig: txSig.recentBlockhash, pubkey: publicKey.toString()};
+              console.log("data", data)
+              postTxResults(data);
+              // const requireAllSignatures = true;
+              // const encodedTx = encode(tx.serialize({ requireAllSignatures }));
+              // console.log("encodedTx", encodedTx);
+            }) 
         } catch (error: any) {
             notify('error', `Transaction signing failed! ${error?.message}`);
         }
     }, [publicKey, signTransaction, connection, notify, queryData]);
 
     return (
-        <Button variant="contained" color="secondary" onClick={onClick} disabled={!publicKey || !signTransaction}>
+        <Button variant="contained" color="secondary" onClick={onClick} disabled={!publicKey || !signTransaction || !queryData}>
             Sign Transaction
         </Button>
     );
