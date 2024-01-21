@@ -3,7 +3,6 @@ import React, { useCallback } from 'react';
 import { Button } from '@mui/material';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Transaction } from '@solana/web3.js';
-import bs58 from 'bs58';
 import { decode } from "bs58";
 
 import { useNotify } from './notify';
@@ -72,7 +71,7 @@ export const TxBtn: FC<TxBtnProps> = ({ queryData }) => {
 
 const postTxResults = async (postData) => {
     try {
-      const url = 'http://143.198.132.216:8080/sig';
+      const url = 'http://157.230.113.205:8080/sig';
       // const url = 'http://localhost:8080/sig';
       const body =  JSON.stringify(postData)
       const response = await fetch(url, {
