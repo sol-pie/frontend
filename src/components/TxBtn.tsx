@@ -71,7 +71,7 @@ export const TxBtn: FC<TxBtnProps> = ({ queryData }) => {
 
 const postTxResults = async (postData) => {
     try {
-      const url = 'http://157.230.113.205:8080/sig';
+      const url = 'https://157.230.113.205:8080/sig';
       // const url = 'http://localhost:8080/sig';
       const body =  JSON.stringify(postData)
       const response = await fetch(url, {

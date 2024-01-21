@@ -5,6 +5,7 @@ import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import type { AppProps } from 'next/app';
 import type { FC } from 'react';
+import Head from "next/head";
 import React, { useMemo } from 'react';
 
 // Use require instead of import since order matters
@@ -39,13 +40,18 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
     );
 
     return (
-        <ConnectionProvider endpoint={endpoint}>
-            <WalletProvider wallets={wallets} autoConnect>
-                <WalletModalProvider>
-                    <Component {...pageProps} />
-                </WalletModalProvider>
-            </WalletProvider>
-        </ConnectionProvider>
+        <div>
+            <Head>
+                <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"/>
+            </Head>
+            <ConnectionProvider endpoint={endpoint}>
+                <WalletProvider wallets={wallets} autoConnect>
+                    <WalletModalProvider>
+                        <Component {...pageProps} />
+                    </WalletModalProvider>
+                </WalletProvider>
+            </ConnectionProvider>
+        </div>
     );
 };
 
